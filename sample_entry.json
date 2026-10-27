@@ -1,0 +1,61 @@
+{
+  "question_id": "bb_6487",
+  "entry": {
+    "question": "Angiosperm (from Greek 'angeion', bottle) is a major scientific classification of land plants which have seeds and?",
+    "context": null,
+    "reference_answers": [
+      "Flowers",
+      "Flowering transitions",
+      "Flower",
+      "Flowerer",
+      "Flowerliness",
+      "Incomplete flower",
+      "Transitions to flowering",
+      "Flowerly",
+      "Flowered",
+      "⚘",
+      "Transition to flowering",
+      "Floration",
+      "Floral displays",
+      "Floweringly",
+      "Flowerdy",
+      "Imperfect flower",
+      "Floral",
+      "Flowering",
+      "Flowers",
+      "Flowering herbs",
+      "Floweredy",
+      "❁",
+      "Internal structure of a flower",
+      "Flower Structure",
+      "Flowering transition",
+      "Flowerers",
+      "Lilled",
+      "Transitioning to flowering",
+      "Florally",
+      "Transitioned to flowering"
+    ],
+    "low_temp_generation": {
+      "response": "vascular tissue",
+      "temperature": 0.1
+    },
+    "high_temp_generations": {
+      "responses": [
+        {
+          "response": "seeds with protective coats",
+          "index": 0
+        },
+        {
+          "response": "a vascular system",
+          "index": 1
+        },
+        {
+          "response": "seeds with protective coats",
+          "index": 2
+        }
+      ],
+      "temperature": 1.0,
+      "num_generations": 3
+    }
+  }
+}

@@ -1,0 +1,460 @@
+RESEARCH FINDINGS
+=================
+
+Project: Hallucination Detection Using Semantic Entropy
+Model: Qwen3-1.7B
+Dataset: TriviaQA
+Environment: C:\Users\TIRTH\venvs\hallucination
+Python: 3.13.0
+Date recorded: 2026-10-27
+
+
+1. PROJECT OBJECTIVE
+--------------------
+
+The project investigates whether repeated answers from a language model can
+be grouped by meaning and used to estimate uncertainty related to
+hallucination.
+
+The implementation is inspired by the semantic entropy method described by
+Farquhar et al. It is an adaptation using a local Qwen3-1.7B model, TriviaQA,
+and a DeBERTa NLI model.
+
+
+2. MODEL AND ENVIRONMENT
+------------------------
+
+The Qwen3-1.7B model is stored locally in the project directory and loaded
+with 4-bit NF4 quantization.
+
+Verified:
+- CUDA was available.
+- NVIDIA GeForce RTX 2050 was detected.
+- The local tokenizer loaded successfully.
+- Qwen3-1.7B loaded successfully.
+- Text generation worked.
+- GPU memory usage was approximately 1.3 GB.
+
+The virtual environment used for validation was:
+
+C:\Users\TIRTH\venvs\hallucination\Scripts\Activate.ps1
+
+
+3. GENERATION PIPELINE
+----------------------
+
+The generation pipeline is implemented through:
+
+- src/config.py
+- src/data_loader.py
+- src/prompt_builder.py
+- src/generator.py
+- generate_data.py
+
+The pipeline:
+
+1. Loads TriviaQA.
+2. Selects five training examples for few-shot prompting.
+3. Builds a short-answer prompt.
+4. Loads local Qwen3-1.7B.
+5. Generates one low-temperature response.
+6. Generates multiple high-temperature responses.
+7. Saves questions, reference answers, generated answers, and metadata as JSON.
+
+Main generation settings:
+
+- Low temperature: 0.1
+- High temperature: 1.0
+- High-temperature responses per question: normally 10
+- Top-p: 0.8
+- Top-k: 20
+- Maximum new tokens: 64
+- Qwen thinking mode: disabled
+
+
+4. VERIFIED GENERATED DATA
+--------------------------
+
+Generated files are stored in:
+
+data\generated\
+
+Verified runs:
+
+File:
+trivia_qa_qwen3_20261024_133805.json
+
+Results:
+- 5 questions
+- 3 high-temperature responses per question
+- 0 recorded generation errors
+
+File:
+trivia_qa_qwen3_20261024_142221.json
+
+Results:
+- 3 questions
+- 3 high-temperature responses per question
+- 0 recorded generation errors
+
+File:
+trivia_qa_qwen3_20261024_162539.json
+
+Results:
+- 100 questions
+- 10 high-temperature responses for every question
+- 0 entries with a recorded generation error
+
+The 100-question result was verified by reading the actual JSON file, not
+only by inspecting its configuration file.
+
+
+5. QWEN TOKEN-LEVEL TEST
+------------------------
+
+test_qwen.py verified that the model can expose:
+
+- Generated text
+- Token logits
+- Token log probabilities
+- Token-level entropy
+- Hidden states
+- A pooled hidden-state representation
+
+The token entropy calculation is based on the next-token probability
+distribution:
+
+H_token = -sum(p(token) * log(p(token)))
+
+This is token-level entropy. It is not the same as semantic entropy.
+Extracting token probabilities and hidden states does not by itself mean that
+the full semantic entropy estimator from the paper has been implemented.
+
+
+6. NLI MODEL TEST
+-----------------
+
+test_nli.py loads:
+
+cross-encoder/nli-deberta-v3-small
+
+The test compares answers in both directions:
+
+- Answer A entails Answer B
+- Answer B entails Answer A
+
+Verified paraphrase example:
+
+Answer A: Paris is the capital of France.
+Answer B: France's capital city is Paris.
+
+Result:
+- Entailment in both directions
+- Scores approximately 0.984
+
+Verified contradiction example:
+
+Answer A: Paris is the capital of France.
+Answer B: Lyon is the capital of France.
+
+Result:
+- Contradiction in both directions
+- Scores approximately 0.994 to 0.996
+
+These tests prove that the NLI model loads and behaves sensibly on two simple
+examples. They do not establish general reliability for every TriviaQA
+paraphrase, subtle disagreement, ambiguous answer, or context-dependent
+answer.
+
+
+7. QUESTION bb_6487
+-------------------
+
+Question:
+
+Angiosperm (from Greek 'angeion', bottle) is a major scientific
+classification of land plants which have seeds and?
+
+Expected answer:
+
+Flowers
+
+The reference answer list contains "Flowers" as its primary answer.
+
+The ten generated high-temperature answers were:
+
+0. vascular tissue
+1. vascular systems
+2. Seed coats
+3. Seed coats
+4. vascular tissues
+5. Vessels
+6. a. carpel
+7. Vascular plants
+8. vascular tissue
+9. a hard shell
+
+Correctness result:
+
+- Correct answers: 0/10
+- Incorrect or non-matching answers: 10/10
+
+This is a clear example where the model produced no correct answer despite
+producing repeated answers in some semantic groups.
+
+
+8. ANSWER CLUSTERING
+--------------------
+
+Clustering is implemented in:
+
+cluster_answers.py
+
+The script reads the existing Qwen JSON output. It does not rerun Qwen.
+
+For each pair of answers, it creates:
+
+Question: [question]
+Answer: [answer A]
+
+and:
+
+Question: [question]
+Answer: [answer B]
+
+The NLI model evaluates both directions.
+
+Two answers are considered mutually entailing only when:
+
+- A -> B is labelled "entailment"
+- B -> A is labelled "entailment"
+- Both scores are at least 0.5
+
+Current clustering rule:
+
+- Greedy complete-linkage clustering.
+- An answer joins a cluster only if it mutually entails every current member
+  of that cluster.
+- If no cluster is compatible, a new cluster is created.
+- The first compatible cluster is selected.
+
+This is stricter than connected-component or Union-Find clustering because it
+does not merge answers merely through a transitive chain:
+
+A <-> B
+B <-> C
+A not equivalent to C
+
+However, it is still greedy and order-dependent. Different answer orders can
+produce different assignments. It is not a globally optimized clustering
+algorithm.
+
+
+9. COMPLETE PAIRWISE INSPECTION FOR bb_6487
+--------------------------------------------
+
+There are 10 answers, so the complete number of unordered pairs is:
+
+10 * 9 / 2 = 45 pairs
+
+The script was updated to evaluate all 45 pairs before clustering. This
+prevents the pair count from being reduced by early stopping during cluster
+formation.
+
+Pairwise results relevant to the main vascular group:
+
+Mutual entailment was predicted for:
+
+- vascular tissue <-> vascular systems
+- vascular tissue <-> vascular tissues
+- vascular tissue <-> Vessels
+- vascular systems <-> vascular tissues
+- vascular systems <-> Vessels
+- vascular tissues <-> Vessels
+
+Examples of model scores:
+
+vascular tissue <-> vascular systems:
+- A -> B: entailment, 0.937
+- B -> A: entailment, 0.923
+
+vascular tissue <-> Vessels:
+- A -> B: entailment, 0.923
+- B -> A: entailment, 0.807
+
+The model gave mixed results for "Vascular plants":
+
+vascular tissue <-> Vascular plants:
+- A -> B: entailment, 0.765
+- B -> A: neutral, 0.671
+- Not mutual entailment
+
+vascular systems <-> Vascular plants:
+- A -> B: entailment, 0.809
+- B -> A: entailment, 0.513
+- Mutual entailment
+
+Vessels <-> Vascular plants:
+- A -> B: entailment, 0.888
+- B -> A: entailment, 0.926
+- Mutual entailment
+
+This demonstrates that the separation of "Vascular plants" is partly a
+consequence of the complete-linkage and greedy ordering rule. It should not
+be treated as an unquestionable semantic fact.
+
+The model generally separated:
+
+- Vascular answers from "Seed coats"
+- Vascular answers from "a hard shell"
+- "a. carpel" from the main vascular answers, generally using neutral labels
+
+
+10. CLUSTERS FOR bb_6487
+------------------------
+
+The current greedy complete-linkage result is:
+
+Cluster 1, size 5:
+- vascular tissue
+- vascular systems
+- vascular tissues
+- Vessels
+- vascular tissue
+
+Cluster 2, size 2:
+- Seed coats
+- Seed coats
+
+Cluster 3, size 1:
+- a. carpel
+
+Cluster 4, size 1:
+- Vascular plants
+
+Cluster 5, size 1:
+- a hard shell
+
+Cluster sizes:
+
+[5, 2, 1, 1, 1]
+
+
+11. SHANNON ENTROPY
+--------------------
+
+The script calculates Shannon entropy over the empirical frequencies of the
+semantic clusters:
+
+H = -sum(p_i * ln(p_i))
+
+where:
+
+p_i = cluster size / total number of answers
+
+For bb_6487:
+
+Cluster sizes:
+[5, 2, 1, 1, 1]
+
+Probabilities:
+[0.5, 0.2, 0.1, 0.1, 0.1]
+
+Entropy:
+
+H = 1.359237 nats
+
+The natural logarithm is used by Python's math.log(), so the unit is nats.
+If log base 2 were used, the unit would be bits instead.
+
+Reference bounds for 10 answers:
+
+- One cluster containing all answers: H = 0 nats
+- Ten separate clusters: H = ln(10) = 2.302585 nats
+
+The current value of 1.359237 nats indicates that the answers are spread
+across several clusters, with one cluster containing half of the responses.
+
+
+12. WHAT HAS BEEN VERIFIED
+---------------------------
+
+Verified components:
+
+- Local Qwen3 model loading
+- CUDA model execution
+- 4-bit model quantization
+- TriviaQA loading
+- Five-shot prompt construction
+- Low-temperature generation
+- High-temperature generation
+- JSON result storage
+- Completed 5-question generation run
+- Completed 3-question generation run
+- Completed 100-question generation run
+- DeBERTa NLI loading
+- Bidirectional NLI comparison
+- Complete pairwise comparison for bb_6487
+- Greedy complete-linkage clustering for bb_6487
+- Frequency-based Shannon entropy for bb_6487
+
+
+13. IMPORTANT SCOPE LIMITATIONS
+--------------------------------
+
+These are limitations of what has been measured so far. They are not errors
+in the working code and they do not mean that the project is broken.
+
+13.1 Frequency estimate, not the paper's full estimator
+
+The current entropy calculation counts how many answers fall into each
+cluster and applies Shannon entropy to those frequencies. It is therefore a
+frequency-based estimate.
+
+The paper's full semantic entropy method uses probability information from
+the language model, such as the likelihood of each generated answer, and
+aggregates that probability mass by semantic cluster. The current pipeline
+does not yet use those answer-level likelihoods for the cluster calculation.
+The current value describes answer disagreement, but it is not the full
+probability-weighted estimator from the paper.
+
+13.2 Clustering quality has only been checked on one question
+
+The NLI model runs and gives sensible results for several obvious pairs.
+However, clustering has only been inspected in detail for question bb_6487.
+
+For that question, the model grouped "Vessels" with "vascular tissue".
+That may be reasonable in the plant-biology context, but it is not
+automatically correct merely because DeBERTa predicted entailment. NLI
+predictions are model judgments and can be mistaken.
+
+The current clustering method is also greedy and order-dependent. Therefore,
+the inspected result does not establish that clusters accurately represent
+meaning across all 100 questions.
+
+13.3 Detection performance has not been measured
+
+The project has not yet tested whether a higher entropy value actually
+corresponds to a factual error across the 100 questions.
+
+For bb_6487, all 10 generated answers were incorrect and the measured
+frequency-based entropy was 1.359237 nats. This is one example only. It does
+not establish a general relationship between entropy and correctness.
+
+13.4 Adaptation rather than exact reproduction
+
+The current implementation is a Qwen3-based adaptation inspired by the paper
+and reference repository. It does not reproduce every model, probability
+calculation, storage format, or evaluation step from the original project.
+
+The verified current workflow is:
+
+Generated responses
+-> NLI pairwise comparisons
+-> Greedy complete-linkage semantic clusters
+-> Shannon entropy over cluster frequencies
+
+This means the project is functioning at the level that has been tested:
+generation, NLI comparison, clustering for one inspected question, and
+frequency-based entropy calculation. The statements above identify what the
+current experiments do not yet prove.
