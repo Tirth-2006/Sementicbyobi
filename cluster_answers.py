@@ -3,7 +3,7 @@ import argparse
 import json
 import math
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Callable, List, Tuple, TypedDict, cast
 
 import torch
 from transformers import pipeline
@@ -13,6 +13,25 @@ MODEL_NAME = "cross-encoder/nli-deberta-v3-small"
 DEFAULT_INPUT = Path("data/generated/trivia_qa_qwen3_20261024_162539.json")
 DEFAULT_QUESTION_ID = "bb_6487"
 ENTAILMENT_THRESHOLD = 0.5
+
+
+class NLIResult(TypedDict):
+    """One Transformers text-classification result."""
+
+    label: str
+    score: float
+
+
+class PairComparison(TypedDict):
+    """Bidirectional NLI result for one answer pair."""
+
+    answer_indices: List[int]
+    mutually_entail: bool
+    a_to_b: NLIResult
+    b_to_a: NLIResult
+
+
+NLIModel = Callable[..., List[dict[str, Any]]]
 
 
 def load_question(input_path: Path, question_id: str) -> Tuple[str, List[str]]:
@@ -46,17 +65,17 @@ def load_question(input_path: Path, question_id: str) -> Tuple[str, List[str]]:
 
 
 def compare_answers(
-    nli,
+    nli: NLIModel,
     question: str,
     answer_a: str,
     answer_b: str,
-) -> Tuple[bool, Dict[str, object], Dict[str, object]]:
+) -> Tuple[bool, NLIResult, NLIResult]:
     """Check whether two answers mutually entail one another."""
     premise = f"Question: {question}\nAnswer: {answer_a}"
     hypothesis = f"Question: {question}\nAnswer: {answer_b}"
 
-    result_ab = nli(premise, text_pair=hypothesis)[0]
-    result_ba = nli(hypothesis, text_pair=premise)[0]
+    result_ab = cast(NLIResult, nli(premise, text_pair=hypothesis)[0])
+    result_ba = cast(NLIResult, nli(hypothesis, text_pair=premise)[0])
 
     mutually_entail = (
         result_ab["label"].lower() == "entailment"
@@ -68,13 +87,13 @@ def compare_answers(
 
 
 def cluster_answers(
-    nli,
+    nli: NLIModel,
     question: str,
     answers: List[str],
-) -> Tuple[List[List[int]], List[Dict[str, object]]]:
+) -> Tuple[List[List[int]], List[PairComparison]]:
     """Build conservative clusters using complete-linkage mutual entailment."""
     clusters: List[List[int]] = []
-    comparisons: List[Dict[str, object]] = []
+    comparisons: List[PairComparison] = []
 
     for first in range(len(answers)):
         for second in range(first + 1, len(answers)):
@@ -117,7 +136,7 @@ def cluster_answers(
 
 def print_selected_comparisons(
     answers: List[str],
-    comparisons: List[Dict[str, object]],
+    comparisons: List[PairComparison],
 ) -> None:
     """Print pairwise decisions involving the vascular-related answers."""
     selected_terms = {
@@ -169,11 +188,11 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    question, answers = load_question(args.input, args.question_id)
     device = 0 if torch.cuda.is_available() else -1
     print(f"Loading {MODEL_NAME} on device {device}...")
     nli = pipeline("text-classification", model=MODEL_NAME, device=device)
 
+    question, answers = load_question(args.input, args.question_id)
     clusters, comparisons = cluster_answers(nli, question, answers)
     entropy = calculate_entropy(clusters, len(answers))
 
