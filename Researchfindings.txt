@@ -458,3 +458,93 @@ This means the project is functioning at the level that has been tested:
 generation, NLI comparison, clustering for one inspected question, and
 frequency-based entropy calculation. The statements above identify what the
 current experiments do not yet prove.
+
+
+14. ORDER-SENSITIVITY EXPERIMENT
+---------------------------------
+
+The script evaluate_order_sensitivity.py tested whether greedy clustering
+changes when the same answers are processed in a different order. It reused
+the saved pairwise NLI decisions from:
+
+data\generated\trivia_qa_qwen3_20261024_162539_clusters.json
+
+No NLI inference or GPU computation was repeated. For each of the 100
+questions, 1,000 deterministic answer permutations were generated using
+seed 20261102. Each permutation used the same first-compatible
+complete-linkage assignment rule as cluster_answers.py.
+
+Results:
+
+- Questions with at least one changed partition: 7/100 (7.0%)
+- Total shuffled runs: 100,000
+- Runs with a changed partition relative to the original order: 2,696
+  (2.696%)
+- Mean per-question entropy range: 0.008329 nats
+- Maximum per-question entropy range: 0.347929 nats
+
+Five questions showed actual entropy variation. The other two affected
+questions produced different partitions with the same cluster-size
+distribution, so their entropy did not change.
+
+For bb_6487 specifically:
+
+- Original entropy: 1.359237 nats
+- Shuffled entropy range: 1.359237 to 1.504788 nats
+- Maximum increase: 0.145552 nats
+- Changed partition rate: 27.8% of sampled permutations
+
+The result confirms that the current estimator is not completely
+order-invariant. In this sample, order dependence was uncommon overall, but
+it was substantial for a small subset of questions and can materially alter
+entropy for individual questions. Therefore, entropy should be interpreted
+with this algorithmic stability limitation in mind.
+
+Output:
+
+data\generated\trivia_qa_qwen3_20261024_162539_order_sensitivity.json
+
+
+15. COMPARISON WITH AN ORDER-INDEPENDENT METHOD
+------------------------------------------------
+
+The script compare_clustering_methods.py compared the current greedy
+complete-linkage method with connected components of the same mutual-
+entailment compatibility graph. The comparison reused the saved pairwise
+NLI decisions and did not rerun NLI inference.
+
+Connected components are order-independent: every answer connected by a path
+of compatible edges is placed in the same component. This removes the
+processing-order problem, but it can create transitive-bridge errors. For
+example, A compatible with B and B compatible with C can merge A and C even
+when A and C are not mutually compatible.
+
+Partition and entropy results:
+
+- Different partitions: 7/100 questions (7.0%)
+- Mean greedy entropy: 1.135527 nats
+- Mean connected-component entropy: 1.116148 nats
+- Mean component-minus-greedy entropy change: -0.019379 nats
+- Maximum absolute entropy change: 0.381909 nats
+
+For every question whose partition changed, connected components produced
+equal or lower entropy because it merged compatible paths into larger
+components. For bb_6487, the greedy cluster sizes were [5, 2, 1, 1, 1],
+whereas connected components produced [6, 2, 1, 1], reducing entropy from
+1.359237 to 1.088900 nats.
+
+Downstream metrics using low-temperature exact-match correctness:
+
+                       AUROC       AURAC
+Greedy complete-linkage 0.841705     0.462878
+Connected components    0.838407     0.465753
+
+The order-independent method slightly improved AURAC (+0.002875) but
+slightly reduced AUROC (-0.003298). This is not evidence that connected
+components are semantically better. It demonstrates a methodological
+tradeoff: order invariance can be obtained at the cost of potentially
+over-merging answers through transitive bridges.
+
+Output:
+
+data\generated\trivia_qa_qwen3_20261024_162539_clustering_comparison.json
