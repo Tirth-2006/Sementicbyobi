@@ -2,7 +2,7 @@
 import json
 import math
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol, cast
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -19,6 +19,28 @@ MODEL_DIR = Path(".")
 EXPECTED_QUESTIONS = 100
 EXPECTED_ANSWERS = 1000
 EOS_TOKEN_ID = 151645
+
+
+class TokenizerProtocol(Protocol):
+    """Runtime tokenizer interface used by the rescoring pipeline."""
+
+    eos_token_id: int | None
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        ...
+
+
+class CausalModelProtocol(Protocol):
+    """Runtime causal-model interface used by the rescoring pipeline."""
+
+    def eval(self) -> Any:
+        ...
+
+    def parameters(self) -> Any:
+        ...
+
+    def __call__(self, **kwargs: Any) -> Any:
+        ...
 
 
 def load_inputs() -> tuple[dict[str, Any], dict[str, Any]]:
@@ -65,8 +87,8 @@ def validate_offsets(
 
 
 def score_text(
-    model: AutoModelForCausalLM,
-    tokenizer: AutoTokenizer,
+    model: CausalModelProtocol,
+    tokenizer: TokenizerProtocol,
     prompt: str,
     answer: str,
     include_eos: bool,
@@ -188,15 +210,21 @@ def main() -> None:
         bnb_4bit_compute_dtype=torch.float16,
         bnb_4bit_use_double_quant=True,
     )
-    tokenizer = AutoTokenizer.from_pretrained(
-        str(MODEL_DIR), local_files_only=True
+    tokenizer = cast(
+        TokenizerProtocol,
+        AutoTokenizer.from_pretrained(
+            str(MODEL_DIR), local_files_only=True
+        ),
     )
-    model = AutoModelForCausalLM.from_pretrained(
-        str(MODEL_DIR),
-        quantization_config=quant_config,
-        device_map="auto",
-        torch_dtype=torch.float16,
-        local_files_only=True,
+    model = cast(
+        CausalModelProtocol,
+        AutoModelForCausalLM.from_pretrained(
+            str(MODEL_DIR),
+            quantization_config=quant_config,
+            device_map="auto",
+            torch_dtype=torch.float16,
+            local_files_only=True,
+        ),
     )
     model.eval()
 
