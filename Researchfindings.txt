@@ -548,3 +548,67 @@ over-merging answers through transitive bridges.
 Output:
 
 data\generated\trivia_qa_qwen3_20261024_162539_clustering_comparison.json
+
+
+12. HIDDEN-STATE PREDICTIVE EVALUATION
+---------------------------------------
+
+The hidden-state predictive evaluation was implemented in:
+
+- evaluate_hidden_state_predictive.py
+
+The evaluation used the saved question-level hidden-state features with
+shape (100, 29, 4, 2048), the separate low-temperature correctness labels,
+semantic entropy, and token entropy. Exact question_id joins were verified
+across all input artifacts. The hidden-state validator passed, all features
+were finite, and the correctness counts were 27 correct and 73 incorrect.
+The original NPZ, CSV, JSON, and correctness artifacts were not rewritten.
+
+Each question was treated as one independent sample. The evaluation covered
+235 configurations:
+
+- 116 hidden-state-only configurations (29 hidden-state indices x 4 pooling
+  strategies)
+- Semantic entropy alone
+- Token entropy alone
+- Semantic entropy plus token entropy
+- 116 hidden-state plus both entropy features configurations
+
+Every configuration used nested stratified question-level cross-validation.
+The outer and inner splits each used 2 folds because the 235 high-dimensional
+configurations made larger fold budgets impractical in the available
+environment. Logistic regression used a StandardScaler inside the training
+pipeline, and regularization was selected only within the outer training
+fold using C values [0.1, 1.0]. Out-of-fold probabilities were converted to
+uncertainty as 1 - P(correct).
+
+Metrics included incorrectness AUROC, AURAC, Spearman correlation between
+uncertainty and correctness, and thresholded classification metrics at
+P(correct) = 0.5. Confidence intervals used 100 question-level bootstrap
+resamples with seed 20261106. Because 116 hidden-state configurations were
+screened, the highest observed configuration is descriptive and is not
+treated as statistically superior without multiplicity-aware testing.
+
+The baseline point estimates were:
+
+- Semantic entropy: AUROC 0.8382, AURAC 0.4796, Spearman -0.5210
+- Token entropy: AUROC 0.8021, AURAC 0.4794, Spearman -0.4647
+- Semantic plus token entropy: AUROC 0.8219, AURAC 0.4947, Spearman -0.4951
+
+Outputs:
+
+- data\generated\hidden_state_predictive_evaluation.csv
+- data\generated\hidden_state_predictive_oof_predictions.csv
+- data\generated\hidden_state_predictive_evaluation.json
+- data\generated\hidden_state_predictive_evaluation_report.md
+
+Follow-up audit:
+
+- The evaluator's original input audit did not compare the token entropy CSV
+  correctness column against the authoritative low-temperature correctness
+  labels. This was corrected in evaluate_hidden_state_predictive.py.
+- The evaluator now rejects any token entropy row whose stored correctness
+  value disagrees with the correctness source.
+- Focused validation after the correction passed: 100 aligned questions,
+  73 incorrect and 27 correct labels, finite features, and 235 evaluated
+  configurations.
