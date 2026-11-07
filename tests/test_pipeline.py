@@ -2,12 +2,12 @@
 import sys
 from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent))
+# Add the src layout to the import path for direct execution.
+sys.path.insert(0, str(Path(__file__).parents[1] / "src"))
 
-from src.config import get_default_config
-from src.data_loader import TriviaQALoader
-from src.prompt_builder import create_prompt_builder
+from uncertainty.config import get_default_config
+from uncertainty.data.data_loader import TriviaQALoader
+from uncertainty.data.prompt_builder import create_prompt_builder
 
 print("=" * 80)
 print("Testing Data Generation Pipeline Components")
@@ -71,7 +71,7 @@ print("   Skip? (press Ctrl+C to skip, Enter to continue)")
 
 try:
     input()
-    from src.generator import QwenGenerator
+    from uncertainty.generation.generator import QwenGenerator
 
     generator = QwenGenerator(config.model)
     print(f"   [OK] Model loaded successfully")

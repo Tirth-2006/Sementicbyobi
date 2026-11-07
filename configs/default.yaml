@@ -1,0 +1,22 @@
+model:
+  name: Qwen3-1.7B
+  quantization: 4bit_nf4_double
+  device_map: auto
+generation:
+  temperature_low: 0.1
+  temperature_high: 1.0
+  top_p: 0.8
+  top_k: 20
+  num_generations: 10
+  max_new_tokens: 64
+  enable_thinking: false
+data:
+  dataset: trivia_qa
+  split: validation
+  num_questions: 100
+  few_shot_examples: 5
+evaluation:
+  random_seed: 20261106
+  outer_folds: 2
+  inner_folds: 2
+  regularization_grid: [0.1, 1.0]

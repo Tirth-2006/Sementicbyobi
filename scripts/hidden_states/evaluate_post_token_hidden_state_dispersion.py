@@ -6,7 +6,7 @@ from typing import Any
 import numpy as np
 import torch
 
-import extract_hidden_state_features as original
+from scripts.hidden_states import extract_hidden_state_features as original
 
 
 OUTPUT_FEATURES = Path(

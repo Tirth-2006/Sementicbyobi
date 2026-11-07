@@ -6,7 +6,7 @@ import logging
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-from .config import ModelConfig, GenerationConfig
+from ..config import ModelConfig, GenerationConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

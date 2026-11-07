@@ -1,0 +1,7 @@
+defaults:
+  - ../default
+experiment: qwen3_triviaqa
+model:
+  name: Qwen3-1.7B
+data:
+  dataset: trivia_qa

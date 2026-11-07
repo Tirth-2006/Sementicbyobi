@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+title: "Semantic Entropy Hallucination Detection"
+message: "If you use this project, please cite it."
+type: software
+authors:
+  - family-names: Tirth
+    given-names: Tirth
+repository-code: "https://github.com/Tirth-2006/semantic-entropy-hallucination-detection"
+license: MIT

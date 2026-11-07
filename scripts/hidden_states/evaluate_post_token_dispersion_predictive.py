@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 
-import evaluate_hidden_state_predictive as base
+from scripts.evaluation import evaluate_hidden_state_predictive as base
 
 
 POST_TOKEN_FEATURES_PATH = base.ROOT / (

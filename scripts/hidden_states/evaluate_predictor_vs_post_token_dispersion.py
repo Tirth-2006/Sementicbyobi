@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 
-import evaluate_hidden_state_predictive as base
+from scripts.evaluation import evaluate_hidden_state_predictive as base
 
 
 ORIGINAL_ANSWER_PATH = base.ROOT / (

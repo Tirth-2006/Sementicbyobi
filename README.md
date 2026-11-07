@@ -30,16 +30,17 @@ This project reproduces the semantic entropy method for detecting hallucinations
 2. Install dependencies:
 ```bash
 pip install torch transformers accelerate bitsandbytes datasets tqdm
+pip install -e .
 ```
 
 ## Usage
 
 ### Generate Semantic Entropy Dataset
 
-Run the data generation pipeline:
+Run the data generation pipeline from the repository root:
 
 ```bash
-python generate_data.py --num_questions 100 --num_generations 10
+python -m scripts.data.generate_data --num_questions 100 --num_generations 10
 ```
 
 **Arguments:**
@@ -86,21 +87,22 @@ Generated data is saved as JSON:
 
 ## Project Structure
 
+```text
+semantic-entropy-hallucination-detection/
+├── configs/                  # Reproducible YAML experiment settings
+├── src/uncertainty/          # Importable data, generation, uncertainty, and evaluation APIs
+├── scripts/                  # Explicit experiment entry points by research stage
+├── tests/                    # Pipeline, model, NLI, and feature tests
+├── data/                     # Tracked examples/annotations; generated data is ignored
+├── results/                  # Compact tracked reports and result summaries
+├── docs/                     # Methodology, experiment, limitation, and reference docs
+├── requirements.txt
+├── pyproject.toml
+└── README.md
 ```
-Hallucination/
-├── src/
-│   ├── __init__.py
-│   ├── config.py              # Configuration management
-│   ├── data_loader.py         # Dataset loading
-│   ├── prompt_builder.py      # Few-shot prompt construction
-│   └── generator.py           # Model wrapper and generation
-├── data/
-│   └── generated/             # Generated responses
-├── generate_data.py           # Main generation script
-├── test_qwen.py              # Model test script
-├── IMPLEMENTATION_PLAN.md    # Detailed implementation plan
-└── README.md                 # This file
-```
+
+The architecture diagram will be added under `docs/architecture/` once the
+final version is provided.
 
 ## Methodology
 

@@ -6,10 +6,10 @@ from datetime import datetime
 from pathlib import Path
 from tqdm import tqdm
 
-from src.config import get_default_config, ExperimentConfig
-from src.data_loader import load_dataset_by_name
-from src.prompt_builder import create_prompt_builder
-from src.generator import QwenGenerator
+from uncertainty.config import get_default_config, ExperimentConfig
+from uncertainty.data.data_loader import load_dataset_by_name
+from uncertainty.data.prompt_builder import create_prompt_builder
+from uncertainty.generation.generator import QwenGenerator
 
 logging.basicConfig(
     level=logging.INFO,

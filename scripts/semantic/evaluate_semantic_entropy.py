@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Tuple
 import torch
 from transformers import pipeline
 
-from cluster_answers import (
+from scripts.semantic.cluster_answers import (
     ENTAILMENT_THRESHOLD,
     MODEL_NAME,
     NLIModel,
