@@ -6,7 +6,7 @@ Implementation of "Detecting Hallucinations in Large Language Models Using Seman
 
 This project reproduces the semantic entropy method for detecting hallucinations in LLM outputs using a smaller, quantized model (Qwen3-1.7B with 4-bit quantization).
 
-**Current Stage**: Step 2 - Data Generation
+**Current Stage**: Evaluation complete for the saved 100-question artifact; ongoing reproducibility and sensitivity analysis
 
 ## Setup
 
@@ -115,17 +115,55 @@ The semantic entropy method:
 
 ### Our Implementation
 
-**Step 2 (Current): Data Generation**
+**Data Generation**
 
 For each question:
 - Generate 1 low-temperature answer (temp=0.1) for accuracy baseline
 - Generate 10 high-temperature answers (temp=1.0) for entropy estimation
 - Store all responses with metadata
 
-**Next Steps:**
-- Step 3: Semantic clustering using DeBERTa NLI
-- Step 4: Semantic entropy calculation
-- Step 5: Evaluation and hallucination detection
+### Saved Evaluation Results
+
+The saved 100-question evaluation artifact contains 27 correct and 73 incorrect
+low-temperature answers, for an initial accuracy of **0.270000**. Higher entropy
+answers are rejected first, with ties ordered by question ID. Using trapezoidal
+integration over retained coverage:
+
+| Estimator | AUROC | AURAC |
+|---|---:|---:|
+| Token entropy | 0.851852 | 0.537749 |
+| Empirical semantic entropy | 0.841451 | 0.462878 |
+
+For empirical semantic entropy, the direct random-rejection baseline is
+**0.269635** (20,000 simulations; 95% interval **[0.187234, 0.360535]**).
+The semantic-entropy AURAC exceeds this baseline by **0.193243**.
+
+The detailed AURAC result is saved in
+`data/generated/trivia_qa_qwen3_20261024_162539_aurac_results.json`, with the
+corresponding rejection curve in
+`data/generated/trivia_qa_qwen3_20261024_162539_aurac_curve.csv`.
+
+### Hidden-State Dispersion Experiments
+
+The frozen 100-question artifact also includes answer-level Qwen3 hidden-state
+experiments. The original extractor uses predictor states at `p-1`; a separate
+post-token extractor uses states at `p`. Both evaluate hidden-state index 28
+with mean pooling and preserve the original NPZ artifacts.
+
+The standalone scripts are:
+
+- `evaluate_post_token_hidden_state_dispersion.py`
+- `evaluate_post_token_dispersion_predictive.py`
+- `evaluate_predictor_vs_post_token_dispersion.py`
+
+The predictor-vs-post-token comparison uses the same question-level nested
+cross-validation protocol as the hidden-state evaluator. In the 100-question
+experiment, predictor-state dispersion gave AUROC **0.839168** and AURAC
+**0.515165** when added to semantic plus token entropy, versus AUROC
+**0.832065** and AURAC **0.509229** for post-token dispersion. The paired
+20,000-resample confidence intervals included zero for the primary AUROC and
+AURAC differences, so these are numerical, not statistically conclusive,
+improvements.
 
 ## Configuration
 

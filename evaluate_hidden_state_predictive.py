@@ -451,6 +451,16 @@ def write_report(results: dict[str, Any]) -> None:
         if row["configuration"]
         in {"semantic_entropy", "token_entropy", "semantic_plus_token_entropy"}
     }
+    hidden_only = [
+        row for row in rows if row["family"] == "hidden_state"
+    ]
+    hidden_combined = [
+        row for row in rows if row["family"] == "hidden_plus_entropy"
+    ]
+    best_hidden_only = max(hidden_only, key=lambda row: row["auroc_incorrect"])
+    best_hidden_combined = max(
+        hidden_combined, key=lambda row: row["auroc_incorrect"]
+    )
     lines = [
         "# Hidden-State Predictive Evaluation",
         "",
@@ -509,6 +519,28 @@ def write_report(results: dict[str, Any]) -> None:
             f"{row['spearman_uncertainty_vs_correct']:.4f} | "
             f"{row['accuracy_at_0_5']:.4f} | {row['f1_at_0_5']:.4f} |"
         )
+    lines.extend(
+        [
+            "",
+            "The best hidden-only and hidden-plus-entropy configurations by "
+            "OOF incorrectness AUROC were:",
+            "",
+            "| Family | Configuration | AUROC incorrect | AURAC | Spearman |",
+            "|---|---|---:|---:|---:|",
+            (
+                f"| hidden-only | {best_hidden_only['configuration']} | "
+                f"{best_hidden_only['auroc_incorrect']:.4f} | "
+                f"{best_hidden_only['aurac']:.4f} | "
+                f"{best_hidden_only['spearman_uncertainty_vs_correct']:.4f} |"
+            ),
+            (
+                f"| hidden + entropy | {best_hidden_combined['configuration']} | "
+                f"{best_hidden_combined['auroc_incorrect']:.4f} | "
+                f"{best_hidden_combined['aurac']:.4f} | "
+                f"{best_hidden_combined['spearman_uncertainty_vs_correct']:.4f} |"
+            ),
+        ]
+    )
     lines.extend(
         [
             "",

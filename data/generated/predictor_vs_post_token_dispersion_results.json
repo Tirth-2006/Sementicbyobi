@@ -1,0 +1,254 @@
+{
+  "experiment": "predictor_vs_post_token_dispersion",
+  "configurations": {
+    "A": {
+      "configuration": "semantic_plus_token_entropy",
+      "feature_dimension": 2,
+      "best_C_by_outer_fold": [
+        1.0,
+        0.1
+      ],
+      "auroc_incorrect": 0.8219178082191781,
+      "aurac": 0.4946754088225071,
+      "spearman_uncertainty_vs_correct": -0.4951088086989842,
+      "accuracy_at_0_5": 0.77,
+      "precision_at_0_5": 0.75,
+      "recall_at_0_5": 0.2222222222222222,
+      "f1_at_0_5": 0.34285714285714286
+    },
+    "B": {
+      "configuration": "semantic_plus_token_entropy_plus_predictor_dispersion",
+      "feature_dimension": 3,
+      "best_C_by_outer_fold": [
+        0.1,
+        0.1
+      ],
+      "auroc_incorrect": 0.839167935058346,
+      "aurac": 0.5151646910972618,
+      "spearman_uncertainty_vs_correct": -0.5216394619626019,
+      "accuracy_at_0_5": 0.79,
+      "precision_at_0_5": 0.65,
+      "recall_at_0_5": 0.48148148148148145,
+      "f1_at_0_5": 0.5531914893617021
+    },
+    "C": {
+      "configuration": "semantic_plus_token_entropy_plus_post_token_dispersion",
+      "feature_dimension": 3,
+      "best_C_by_outer_fold": [
+        0.1,
+        0.1
+      ],
+      "auroc_incorrect": 0.8320649416539827,
+      "aurac": 0.5092290278631474,
+      "spearman_uncertainty_vs_correct": -0.5107150753246417,
+      "accuracy_at_0_5": 0.77,
+      "precision_at_0_5": 0.6111111111111112,
+      "recall_at_0_5": 0.4074074074074074,
+      "f1_at_0_5": 0.4888888888888889
+    }
+  },
+  "paired_bootstrap": {
+    "resamples": 20000,
+    "random_seed": 20261106,
+    "comparisons": {
+      "B_minus_A": {
+        "difference": "B minus A",
+        "confidence_intervals_95": {
+          "auroc_incorrect": [
+            -0.028170604655601554,
+            0.06949831436132811
+          ],
+          "aurac": [
+            -0.02093701119861045,
+            0.06820421142621097
+          ],
+          "spearman_uncertainty_vs_correct": [
+            -0.10586503979258438,
+            0.04265719735105537
+          ],
+          "accuracy_at_0_5": [
+            -0.05999999999999994,
+            0.09999999999999998
+          ],
+          "precision_at_0_5": [
+            -0.38888888888888884,
+            0.20772946859903385
+          ],
+          "recall_at_0_5": [
+            0.038461538461538436,
+            0.48
+          ],
+          "f1_at_0_5": [
+            -0.030333670374115274,
+            0.4507980507555285
+          ]
+        },
+        "valid_samples": {
+          "auroc_incorrect": 20000,
+          "aurac": 20000,
+          "spearman_uncertainty_vs_correct": 20000,
+          "accuracy_at_0_5": 20000,
+          "precision_at_0_5": 20000,
+          "recall_at_0_5": 20000,
+          "f1_at_0_5": 20000
+        },
+        "undefined_samples": {
+          "auroc_incorrect": 0,
+          "aurac": 0,
+          "spearman_uncertainty_vs_correct": 0,
+          "accuracy_at_0_5": 0,
+          "precision_at_0_5": 0,
+          "recall_at_0_5": 0,
+          "f1_at_0_5": 0
+        }
+      },
+      "C_minus_A": {
+        "difference": "C minus A",
+        "confidence_intervals_95": {
+          "auroc_incorrect": [
+            -0.03353181879182064,
+            0.058133980801806866
+          ],
+          "aurac": [
+            -0.027416714605910785,
+            0.060537069199043426
+          ],
+          "spearman_uncertainty_vs_correct": [
+            -0.08843133535746817,
+            0.05073514223931613
+          ],
+          "accuracy_at_0_5": [
+            -0.07000000000000006,
+            0.07000000000000006
+          ],
+          "precision_at_0_5": [
+            -0.4285714285714286,
+            0.16666666666666663
+          ],
+          "recall_at_0_5": [
+            -0.03125,
+            0.3940909090908959
+          ],
+          "f1_at_0_5": [
+            -0.08571428571428574,
+            0.3806528417818734
+          ]
+        },
+        "valid_samples": {
+          "auroc_incorrect": 20000,
+          "aurac": 20000,
+          "spearman_uncertainty_vs_correct": 20000,
+          "accuracy_at_0_5": 20000,
+          "precision_at_0_5": 20000,
+          "recall_at_0_5": 20000,
+          "f1_at_0_5": 20000
+        },
+        "undefined_samples": {
+          "auroc_incorrect": 0,
+          "aurac": 0,
+          "spearman_uncertainty_vs_correct": 0,
+          "accuracy_at_0_5": 0,
+          "precision_at_0_5": 0,
+          "recall_at_0_5": 0,
+          "f1_at_0_5": 0
+        }
+      },
+      "C_minus_B": {
+        "difference": "C minus B",
+        "confidence_intervals_95": {
+          "auroc_incorrect": [
+            -0.023391812865496967,
+            0.007905138339920903
+          ],
+          "aurac": [
+            -0.020819020699156407,
+            0.004435506066339868
+          ],
+          "spearman_uncertainty_vs_correct": [
+            -0.011986356819171123,
+            0.03588795261787104
+          ],
+          "accuracy_at_0_5": [
+            -0.050000000000000044,
+            0.0
+          ],
+          "precision_at_0_5": [
+            -0.1127819548872181,
+            0.0
+          ],
+          "recall_at_0_5": [
+            -0.19047619047619047,
+            0.0
+          ],
+          "f1_at_0_5": [
+            -0.16666666666666669,
+            0.0
+          ]
+        },
+        "valid_samples": {
+          "auroc_incorrect": 20000,
+          "aurac": 20000,
+          "spearman_uncertainty_vs_correct": 20000,
+          "accuracy_at_0_5": 20000,
+          "precision_at_0_5": 20000,
+          "recall_at_0_5": 20000,
+          "f1_at_0_5": 20000
+        },
+        "undefined_samples": {
+          "auroc_incorrect": 0,
+          "aurac": 0,
+          "spearman_uncertainty_vs_correct": 0,
+          "accuracy_at_0_5": 0,
+          "precision_at_0_5": 0,
+          "recall_at_0_5": 0,
+          "f1_at_0_5": 0
+        }
+      }
+    }
+  },
+  "data_audit": {
+    "questions": 100,
+    "correct": 27,
+    "incorrect": 73,
+    "question_ids_match": true,
+    "mean_pooling_index": 2,
+    "predictor_dispersion": {
+      "path": "data\\generated\\trivia_qa_qwen3_20261024_162539_hidden_state_features.npz",
+      "input_shape": [
+        1000,
+        29,
+        4,
+        2048
+      ],
+      "input_dtype": "float16",
+      "dispersion_dtype": "float64",
+      "all_finite": true
+    },
+    "post_token_dispersion": {
+      "path": "data\\generated\\trivia_qa_qwen3_20261024_162539_post_token_hidden_state_features.npz",
+      "input_shape": [
+        1000,
+        2048
+      ],
+      "input_dtype": "float32",
+      "dispersion_dtype": "float64",
+      "all_finite": true
+    },
+    "all_features_finite": true
+  },
+  "settings": {
+    "outer_folds": 2,
+    "inner_folds": 2,
+    "shuffle": true,
+    "random_state": 20261106,
+    "regularization_grid": [
+      0.1,
+      1.0
+    ],
+    "classifier": "LogisticRegression solver=lbfgs max_iter=1000",
+    "scaler": "StandardScaler inside Pipeline",
+    "selection_metric": "inner-fold AUROC",
+    "uncertainty": "1 - P(correct)",
+    "dispersion_arithmetic": "float64"
+  }
+}

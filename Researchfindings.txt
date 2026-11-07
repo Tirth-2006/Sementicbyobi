@@ -612,3 +612,68 @@ Follow-up audit:
 - Focused validation after the correction passed: 100 aligned questions,
   73 incorrect and 27 correct labels, finite features, and 235 evaluated
   configurations.
+
+The evaluator was subsequently audited without rerunning model fitting. The
+saved outputs contain 235 metric rows and 23,500 out-of-fold prediction rows,
+with exactly 100 predictions for each configuration. The report generator was
+updated to summarize both the best hidden-only and best hidden-plus-entropy
+configurations by OOF incorrectness AUROC, while retaining the complete CSV
+and JSON results. No original feature, entropy, correctness, or generation
+artifact was modified.
+
+The evaluator was rerun on 2026-11-07 using the saved artifacts. The rerun
+completed successfully and reproduced:
+
+- 235 metric rows
+- 23,500 out-of-fold prediction rows
+- 100 predictions for every configuration
+- Finite values for all reported metric fields
+
+Baseline OOF results:
+
+- Semantic entropy: AUROC 0.838153, AURAC 0.479576, Spearman -0.521014
+- Token entropy: AUROC 0.802131, AURAC 0.479362, Spearman -0.464677
+- Semantic plus token entropy: AUROC 0.821918, AURAC 0.494675,
+  Spearman -0.495109
+
+The best hidden-only configuration by OOF incorrectness AUROC was
+hidden_state_28_mean: AUROC 0.771689, AURAC 0.462826, Spearman -0.417858.
+The best hidden-plus-entropy configuration was
+hidden_state_28_mean_plus_entropy: AUROC 0.804668, AURAC 0.481866,
+Spearman -0.468578. These best-of-many results are descriptive and are not
+treated as statistically superior.
+
+The hidden-state artifact validator and evaluator py_compile checks passed.
+The original hidden-state NPZ hashes remained unchanged.
+
+Post-token hidden-state dispersion was then evaluated as a separate
+question-level feature. The post-token extractor selected hidden states at
+answer token positions `p`, rather than the causal predictor positions `p-1`,
+used hidden-state index 28 and mean pooling, and saved separate artifacts.
+The 1,000 answer vectors had shape `(1000, 2048)` and the question-level
+features had shape `(100, 2048)`. Mapping, finite-value, and aggregation
+validation passed with zero failures.
+
+Using float64 dispersion arithmetic across all 100 questions gave a minimum
+of 0.000000, maximum 53.857150, mean 29.446883, median 34.577319, and
+standard deviation 16.672374. Fifteen questions had exactly identical
+post-token answer vectors and exactly zero dispersion.
+
+The post-token dispersion predictor was evaluated with the existing
+question-level nested 2-fold/2-fold cross-validation protocol. Semantic plus
+token entropy achieved AUROC 0.821918, AURAC 0.494675, and Spearman -0.495109.
+Adding post-token dispersion achieved AUROC 0.832065, AURAC 0.509229, and
+Spearman -0.510715. The paired 20,000-resample confidence intervals for the
+AUROC and AURAC differences included zero.
+
+A direct comparison of dispersion alignment was completed using identical
+splits and 20,000 paired bootstrap resamples. Predictor-state dispersion
+(hidden state at `p-1`, hidden-state index 28, mean pooling) achieved AUROC
+0.839168, AURAC 0.515165, accuracy 0.790000, and F1 0.553191 after adding
+semantic and token entropy. Post-token dispersion achieved AUROC 0.832065,
+AURAC 0.509229, accuracy 0.770000, and F1 0.488889. Predictor-state
+dispersion was numerically stronger, but the paired AUROC and AURAC intervals
+for post-token minus predictor-state dispersion included zero:
+[-0.023392, 0.007905] and [-0.020819, 0.004436], respectively. Thus the
+alignment comparison does not establish a statistically supported winner on
+the 100-question artifact.

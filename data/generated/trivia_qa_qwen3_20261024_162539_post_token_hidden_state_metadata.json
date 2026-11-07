@@ -1,0 +1,32 @@
+{
+  "source_script": "extract_hidden_state_features.py",
+  "input_file": "data\\generated\\trivia_qa_qwen3_20261024_162539.json",
+  "model": "Qwen3-1.7B",
+  "quantization": "4-bit NF4 with double quantization",
+  "compute_dtype": "float16",
+  "device_map": "auto",
+  "hidden_state_index": 28,
+  "hidden_size": 2048,
+  "position_alignment": "hidden state at selected answer token position p",
+  "pooling": "mean over selected answer-token hidden states",
+  "num_questions": 100,
+  "num_answers": 1000,
+  "answer_feature_shape": [
+    1000,
+    2048
+  ],
+  "question_feature_shape": [
+    100,
+    2048
+  ],
+  "answer_feature_dtype": "float32",
+  "question_feature_dtype": "float32",
+  "validation_failures": 0,
+  "dispersion": {
+    "min": 0.0,
+    "max": 53.857147216796875,
+    "mean": 29.446884155273438,
+    "median": 34.57731628417969,
+    "std": 16.672374725341797
+  }
+}
