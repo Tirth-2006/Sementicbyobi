@@ -80,7 +80,7 @@ Saved answers are reconstructed with their prompts and passed through Qwen3 usin
 The vocabulary probability is obtained from logits $z_{t,v}$ using softmax:
 
 $$
-P(v\mid x_{<t})=
+P(v\mid x_{\lt t})=
 \frac{\exp(z_{t,v})}
 {\sum_{j=1}^{V}\exp(z_{t,j})}.
 $$
@@ -88,7 +88,7 @@ $$
 The predictive entropy at position $t$ is:
 
 $$
-H_t=-\sum_{v=1}^{V}P(v\mid x_{<t})\ln P(v\mid x_{<t}).
+H_t=-\sum_{v=1}^{V}P(v\mid x_{\lt t})\ln P(v\mid x_{\lt t}).
 $$
 
 Important qualifications:
