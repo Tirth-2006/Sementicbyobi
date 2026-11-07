@@ -190,6 +190,33 @@ Post-token dispersion standalone 95% bootstrap intervals (20,000 question-level 
 
 The raw token-entropy point estimates are higher than the raw semantic-entropy point estimates, but paired question-level bootstrap intervals included zero for the differences in Spearman, AUROC and AURAC. The experiment did not establish statistical superiority of one raw entropy signal over the other.
 
+Raw semantic- and token-entropy 95% bootstrap intervals (20,000 question-level resamples, seed `20261031`):
+
+| Raw signal | Metric | Point estimate | 95% interval |
+|---|---|---:|---:|
+| Semantic entropy | Spearman | -0.528199 | [-0.651525, -0.381724] |
+| Semantic entropy | AUROC | 0.841451 | [0.753715, 0.914173] |
+| Semantic entropy | AURAC | 0.462878 | [0.326030, 0.604548] |
+| Token entropy | Spearman | -0.541147 | [-0.677502, -0.372187] |
+| Token entropy | AUROC | 0.851852 | [0.749243, 0.936012] |
+| Token entropy | AURAC | 0.537749 | [0.402956, 0.653437] |
+
+Paired token-minus-semantic differences using the same 20,000 question-level bootstrap resamples:
+
+| Metric | Difference (token - semantic) | 95% interval |
+|---|---:|---:|
+| Spearman | -0.012948 | [-0.109464, 0.085115] |
+| AUROC | +0.010401 | [-0.054771, 0.074568] |
+| AURAC | +0.074870 | [-0.002527, 0.141731] |
+
+All three paired intervals include zero. Token entropy has higher AUROC and AURAC point estimates, but these comparisons do not establish statistically supported superiority over empirical semantic entropy.
+
+#### Random-rejection reference for AURAC
+
+The direct random-rejection baseline has mean AURAC **0.269635** over 20,000 simulations, with a 95% simulation interval of **[0.187234, 0.360535]**. The empirical semantic-entropy AURAC point estimate exceeds this random-rejection mean by **0.193243**. This is a reference comparison on the same 100-question sample, not evidence of generalization to other datasets or models.
+
+AURAC implementation convention: reject questions in descending uncertainty order; break ties by ascending `question_id`; integrate retained accuracy over retained coverage using the trapezoidal rule. The zero-coverage endpoint is handled using the one-retained-question point.
+
 ### B. Initial nested-CV predictive-probe screening
 
 The initial screening evaluated 235 configurations:
