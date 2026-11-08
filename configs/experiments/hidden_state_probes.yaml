@@ -1,0 +1,11 @@
+defaults:
+  - ../default
+experiment: hidden_state_probes
+hidden_states:
+  index: 28
+  pooling: mean
+  predictor_alignment: p_minus_1
+evaluation:
+  outer_folds: 2
+  inner_folds: 2
+  regularization_grid: [0.1, 1.0]

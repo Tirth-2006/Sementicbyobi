@@ -1,0 +1,39 @@
+# Local environments and caches
+.venv/
+venv/
+env/
+.cache/
+__pycache__/
+*.py[cod]
+
+# Local model weights and tokenizer artifacts
+*.safetensors
+*.bin
+tokenizer.json
+tokenizer_config.json
+vocab.json
+merges.txt
+model.safetensors.index.json
+config.json
+generation_config.json
+
+# Generated experiment outputs.
+# Existing tracked files stay tracked. New large outputs are ignored; small,
+# stable reports are allow-listed below (curated copies belong in results/).
+data/generated/*
+!data/generated/*_report.md
+!data/generated/*_aurac_curve.csv
+generation_log.txt
+semantic_uncertainty_repo/
+
+# Local editor and OS files
+.vscode/
+.idea/
+*.tmp
+*.log
+
+# Build and test artifacts
+.pytest_cache/
+build/
+dist/
+*.egg-info/

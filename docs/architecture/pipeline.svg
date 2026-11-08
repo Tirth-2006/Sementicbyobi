@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="t d">
+  <title id="t">Research pipeline</title>
+  <desc id="d">TriviaQA question feeds ten T=1.0 responses and one T=0.1 response. The ten responses feed semantic, token and hidden-state branches, which are evaluated against the exact-match target from the T=0.1 response.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#555"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:13px;fill:#111}
+      .b{fill:#f4f6fa;stroke:#4a5a78;stroke-width:1.4}
+      .s{fill:#e8f3ea;stroke:#3d7a4a;stroke-width:1.4}
+      .t{fill:#fdf1e3;stroke:#b8742a;stroke-width:1.4}
+      .h{fill:#ece9f7;stroke:#6a5ab0;stroke-width:1.4}
+      .y{fill:#fbeaea;stroke:#b04a4a;stroke-width:1.4}
+      .e{fill:#e6f1f8;stroke:#2f6f9f;stroke-width:1.6}
+      .l{stroke:#555;stroke-width:1.4;fill:none;marker-end:url(#a)}
+      .n{font-size:11px;fill:#555}
+    </style>
+  </defs>
+  <rect x="330" y="14" width="240" height="40" rx="6" class="b"/>
+  <text x="450" y="38" text-anchor="middle">TriviaQA question</text>
+  <rect x="150" y="90" width="270" height="48" rx="6" class="b"/>
+  <text x="285" y="110" text-anchor="middle">Qwen3-1.7B: 10 responses</text>
+  <text x="285" y="127" text-anchor="middle" class="n">T=1.0, top-p 0.8, top-k 20 (features)</text>
+  <rect x="560" y="90" width="270" height="48" rx="6" class="y"/>
+  <text x="695" y="110" text-anchor="middle">Qwen3-1.7B: 1 separate response</text>
+  <text x="695" y="127" text-anchor="middle" class="n">T=0.1 (target)</text>
+  <path class="l" d="M420 54 L300 90"/><path class="l" d="M480 54 L690 90"/>
+  <rect x="20" y="200" width="250" height="56" rx="6" class="s"/>
+  <text x="145" y="222" text-anchor="middle">Semantic branch</text>
+  <text x="145" y="240" text-anchor="middle" class="n">bidirectional NLI clustering (DeBERTa)</text>
+  <rect x="300" y="200" width="250" height="56" rx="6" class="t"/>
+  <text x="425" y="222" text-anchor="middle">Token branch</text>
+  <text x="425" y="240" text-anchor="middle" class="n">teacher-forced logits, raw softmax</text>
+  <rect x="580" y="200" width="300" height="56" rx="6" class="h"/>
+  <text x="730" y="222" text-anchor="middle">Hidden-state branch</text>
+  <text x="730" y="240" text-anchor="middle" class="n">29 layers × 4 poolings; p-1 and p alignment</text>
+  <path class="l" d="M240 138 L145 200"/><path class="l" d="M285 138 L400 200"/><path class="l" d="M330 138 L690 200"/>
+  <rect x="20" y="300" width="250" height="48" rx="6" class="s"/>
+  <text x="145" y="321" text-anchor="middle">Empirical semantic entropy</text>
+  <text x="145" y="337" text-anchor="middle" class="n">Shannon entropy of cluster frequencies</text>
+  <rect x="300" y="300" width="250" height="48" rx="6" class="t"/>
+  <text x="425" y="321" text-anchor="middle">Question-level token entropy</text>
+  <text x="425" y="337" text-anchor="middle" class="n">mean over tokens, then over 10 answers</text>
+  <rect x="580" y="300" width="300" height="48" rx="6" class="h"/>
+  <text x="730" y="321" text-anchor="middle">Hidden-state features and dispersion</text>
+  <text x="730" y="337" text-anchor="middle" class="n">mean Euclidean distance to centroid</text>
+  <path class="l" d="M145 256 L145 300"/><path class="l" d="M425 256 L425 300"/><path class="l" d="M730 256 L730 300"/>
+  <rect x="560" y="400" width="320" height="44" rx="6" class="y"/>
+  <text x="720" y="419" text-anchor="middle">Normalized exact-match label</text>
+  <text x="720" y="435" text-anchor="middle" class="n">binary, one per question</text>
+  <path class="l" d="M720 138 L850 160 L850 380 L800 400" />
+  <rect x="250" y="480" width="400" height="56" rx="6" class="e"/>
+  <text x="450" y="502" text-anchor="middle">Question-level evaluation</text>
+  <text x="450" y="520" text-anchor="middle" class="n">Spearman, AUROC, AURAC, bootstrap CIs, nested-CV probes</text>
+  <path class="l" d="M145 348 L145 508 L250 508"/><path class="l" d="M425 348 L425 480"/>
+  <path class="l" d="M730 348 L730 372 L520 372 L500 480"/><path class="l" d="M640 444 L560 480"/>
+</svg>

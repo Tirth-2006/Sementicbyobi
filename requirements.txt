@@ -1,0 +1,10 @@
+# Full experiment environment (local GPU model runs).
+# Install a CUDA build of PyTorch appropriate for your OS/driver first, see
+# https://pytorch.org/get-started/locally/ ; then:  pip install -r requirements.txt
+-r requirements-test.txt
+torch>=2.0.0
+transformers>=4.51.0
+accelerate>=0.20.0
+bitsandbytes>=0.41.0
+datasets>=2.14.0
+tqdm>=4.65.0

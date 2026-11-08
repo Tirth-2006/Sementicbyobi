@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "Semantic Entropy Hallucination Detection"
+message: "If you use this project, please cite it. Also cite Farquhar et al. (2024) for semantic entropy."
+type: software
+version: 0.1.0
+date-released: 2026-11-08
+abstract: >-
+  Exploratory research code comparing semantic entropy, token predictive entropy and hidden-state
+  features for question-level correctness prediction (100-question TriviaQA sample, Qwen3-1.7B).
+  An experimental adaptation of semantic entropy, not a validated hallucination detector.
+authors:
+  - family-names: Patel
+    given-names: Tirth Sanjaykumar
+repository-code: "https://github.com/Tirth-2006/semantic-entropy-hallucination-detection"
+license: Apache-2.0
+keywords:
+  - semantic entropy
+  - uncertainty estimation
+  - hallucination
+  - large language models
+references:
+  - type: article
+    title: "Detecting hallucinations in large language models using semantic entropy"
+    authors:
+      - family-names: Farquhar
+        given-names: Sebastian
+    journal: Nature
+    year: 2024
+    doi: 10.1038/s41586-024-07421-0
