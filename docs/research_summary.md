@@ -55,5 +55,6 @@ See [limitations](limitations.md) and [reproducibility](reproducibility.md).
 
 1. Larger and additional datasets; more model sizes/families.
 2. Probability-weighted semantic entropy using saved generation-time log-probabilities.
-3. Record the checkpoint revision/hash (see [reproducibility](reproducibility.md)).
+3. Compare the recorded file hashes against the official Hugging Face release to pin the upstream
+   revision (see [reproducibility](reproducibility.md)).
 4. Human-labelled evaluation of NLI equivalence and of answer correctness.

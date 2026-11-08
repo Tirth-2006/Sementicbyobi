@@ -363,8 +363,10 @@ README does not assert a green build.
 
 Remaining reproducibility limitations:
 
-- The exact Qwen checkpoint revision/hash was not recorded. `scripts/utils/record_model_provenance.py`
-  records it; until `results/provenance/model_provenance.json` is committed, it remains unrecorded.
+- The upstream Hugging Face revision of the Qwen checkpoint was not recorded when the experiments were
+  run. SHA-256 hashes of the local checkpoint files were recorded afterwards on 8 November 2026 in
+  [`results/provenance/model_provenance.json`](results/provenance/model_provenance.json); they identify
+  the files on disk, assuming those files were not changed after the experiments.
 - The generated-answer corpus and NPZ tensors are not committed, so not every stage can be re-run from
   a clean clone.
 - Generation-time token log-probabilities and filtered sampling distributions were not saved, so

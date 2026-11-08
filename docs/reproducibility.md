@@ -43,10 +43,16 @@ Large JSON/NPZ/model files are intentionally kept out of default Git history. If
 (e.g. a GitHub Release or Hugging Face dataset), record their SHA-256 here.
 Small curated reports are tracked under [`results/`](../results/README.md).
 
-## 4. Recording model provenance (action needed on the original machine)
+## 4. Model provenance
 
-The exact checkpoint revision/hash used for the reported results was **not recorded**. On the
-machine that holds that checkpoint, run:
+SHA-256 hashes of the local Qwen3-1.7B checkpoint and tokenizer files, plus Python and package
+versions, were recorded on 8 November 2026 in
+[`results/provenance/model_provenance.json`](../results/provenance/model_provenance.json).
+
+Limits of this record: the upstream Hugging Face commit revision was **not** captured when the
+experiments ran (`hf_snapshot_revision` is `null`), the hashes assume the files on disk were not
+modified after the experiments, and the package versions describe the environment on the recording
+date. To regenerate it for another copy of the model:
 
 ```bash
 export UNCERTAINTY_MODEL_DIR=/path/to/Qwen3-1.7B
@@ -55,8 +61,7 @@ git add results/provenance/model_provenance.json
 ```
 
 This writes SHA-256 hashes of the config, tokenizer and weight files plus Python and package
-versions (no absolute paths) to `results/provenance/model_provenance.json`. Until that file exists,
-the README's statement that the revision was not recorded remains true.
+versions (no absolute paths) to `results/provenance/model_provenance.json`.
 
 ## 5. Environments
 

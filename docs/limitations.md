@@ -53,7 +53,8 @@ a deployable hallucination detector.
 
 ## Reproducibility
 
-* The exact Qwen checkpoint revision/hash was not recorded (see
-  [reproducibility](reproducibility.md) for how to record it).
+* The upstream Hugging Face revision of the Qwen checkpoint was not recorded at run time. File hashes
+  of the local checkpoint were recorded afterwards (8 November 2026; see
+  [reproducibility](reproducibility.md)) and assume the files were unchanged since the experiments.
 * Full generated-answer JSON and NPZ tensors are not committed; a fresh clone cannot re-run every
   stage without them.
