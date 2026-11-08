@@ -25,3 +25,23 @@ manual_checks/               opt-in checks that load real models/datasets
 
 The dependency direction is one-way: `scripts/` → `src/uncertainty/`. A test enforces that the
 package never imports from `scripts/`.
+
+## Detailed system diagram
+
+![Detailed architecture](llm_hallucination_architecture_v2.png)
+
+*Snapshot of 7 November 2026. Code references in the figure use the original layout (for example `src/generator.py` and the root-level `evaluate_low_temp_correctness.py`); see the code layout above for current locations.*
+
+## Report
+
+[Predicting Answer Correctness in a Small Language Model (PDF)](../reports/predicting_answer_correctness_report.pdf) - exploratory pilot, not peer reviewed.
+
+## Detailed system diagram
+
+![Detailed architecture](llm_hallucination_architecture_v2.png)
+
+*Snapshot of 7 November 2026. Code references in the figure use the original layout (for example `src/generator.py` and the root-level `evaluate_low_temp_correctness.py`); see the code layout above for current locations.*
+
+## Report
+
+[Predicting Answer Correctness in a Small Language Model (PDF)](../reports/predicting_answer_correctness_report.pdf) - exploratory pilot, not peer reviewed.
