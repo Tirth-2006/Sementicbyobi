@@ -10,7 +10,7 @@ out of Git; see [reproducibility](../docs/reproducibility.md).
 | [`predictive_probes/`](predictive_probes/README.md) | Initial 235-configuration nested-CV screening summary |
 | [`hidden_states/post_token_dispersion/`](hidden_states/post_token_dispersion/README.md) | Post-token dispersion predictive test (`report.md`, `metrics.csv`) |
 | [`hidden_states/predictor_vs_post_token/`](hidden_states/predictor_vs_post_token/README.md) | Predictor-state vs post-token comparison (`report.md`, `metrics.csv`) |
-| [`provenance/`](provenance/README.md) | Model/environment fingerprint (to be generated) |
+| [`provenance/`](provenance/README.md) | Recorded model/environment fingerprint (`model_provenance.json`) |
 
 All results: one 100-question TriviaQA sample, Qwen3-1.7B, 27 correct / 73 incorrect targets.
 Exploratory only. Tables in `baselines/` and `predictive_probes/` are transcribed from the project's

@@ -68,9 +68,20 @@ class GenerationConfig:
     # Token limits
     max_new_tokens: int = 64
 
-    # Sampling
+    # Sampling. ``do_sample`` is honoured by the generator (sampling happens only
+    # when it is true AND the temperature is > 0; otherwise decoding is greedy).
     do_sample: bool = True
-    enable_thinking: bool = False  # Disable Qwen3 thinking mode
+    # Recorded for protocol documentation only. Prompts are raw few-shot text and
+    # no chat template is applied, so Qwen3's thinking toggle is never used.
+    # ``True`` is not implemented and is rejected.
+    enable_thinking: bool = False
+
+    def __post_init__(self):
+        if self.enable_thinking:
+            raise ValueError(
+                "enable_thinking=True is not supported: generation uses raw "
+                "few-shot text prompts without a chat template."
+            )
 
 
 @dataclass

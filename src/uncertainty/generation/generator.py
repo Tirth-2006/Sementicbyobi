@@ -6,6 +6,7 @@ import torch
 
 from ..config import ModelConfig, GenerationConfig
 from ..models import load_quantized_causal_lm
+from .sampling import resolve_sampling_kwargs
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -51,7 +52,7 @@ class QwenGenerator:
                        top_p: float = 0.8,
                        top_k: int = 20,
                        max_new_tokens: int = 64,
-                       enable_thinking: bool = False) -> str:
+                       do_sample: bool = True) -> str:
         """Generate a single response.
 
         Args:
@@ -60,7 +61,7 @@ class QwenGenerator:
             top_p: Nucleus sampling parameter
             top_k: Top-k sampling parameter
             max_new_tokens: Maximum tokens to generate
-            enable_thinking: Enable Qwen3 thinking mode
+            do_sample: Sample when True and temperature > 0; otherwise greedy
 
         Returns:
             Generated answer text (cleaned)
@@ -70,17 +71,13 @@ class QwenGenerator:
         inputs = self.tokenizer(prompt, return_tensors="pt").to("cuda:0")
         prompt_len = inputs["input_ids"].shape[1]
 
-        # Determine sampling mode
-        do_sample = temperature > 0.0
+        sampling = resolve_sampling_kwargs(temperature, top_p, top_k, do_sample)
 
         with torch.inference_mode():
             generated = self.model.generate(
                 **inputs,
                 max_new_tokens=max_new_tokens,
-                do_sample=do_sample,
-                temperature=temperature if do_sample else None,
-                top_p=top_p if do_sample else None,
-                top_k=top_k if do_sample else None,
+                **sampling,
                 pad_token_id=self.tokenizer.eos_token_id,
                 eos_token_id=self.tokenizer.eos_token_id
             )
@@ -136,7 +133,7 @@ class QwenGenerator:
             top_p=gen_config.top_p,
             top_k=gen_config.top_k,
             max_new_tokens=gen_config.max_new_tokens,
-            enable_thinking=gen_config.enable_thinking
+            do_sample=gen_config.do_sample
         )
 
         results['low_temp'] = {
@@ -157,7 +154,7 @@ class QwenGenerator:
                 top_p=gen_config.top_p,
                 top_k=gen_config.top_k,
                 max_new_tokens=gen_config.max_new_tokens,
-                enable_thinking=gen_config.enable_thinking
+                do_sample=gen_config.do_sample
             )
             high_temp_answers.append({
                 'response': answer,

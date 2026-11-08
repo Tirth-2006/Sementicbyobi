@@ -41,7 +41,12 @@ October quick-start is archived at
 5. **Evaluation protocols are kept separate.** Direct raw-score ranking and out-of-fold probe
    probabilities must not be mixed. AURAC rejects by descending uncertainty, breaks ties by
    ascending `question_id`, and integrates retained accuracy over coverage with the trapezoidal rule.
-6. **Code layout.** Reusable logic lives in `src/uncertainty/`; files in `scripts/` are thin
+6. **Generation protocol.** Prompts are raw few-shot text (`Question: ... Answer:`); no chat template
+   is applied, so Qwen3's thinking toggle is not used (`enable_thinking` is recorded as `false` and
+   `true` is rejected). Both the T = 0.1 and the T = 1.0 generations are sampled (`do_sample=True`,
+   top-p 0.8, top-k 20, at most 64 new tokens). `do_sample=False` or a temperature of 0 would give
+   greedy decoding; that was not used.
+7. **Code layout.** Reusable logic lives in `src/uncertainty/`; files in `scripts/` are thin
    command-line entry points. The package never imports from `scripts/`.
 
 ## Frozen-artifact assumption

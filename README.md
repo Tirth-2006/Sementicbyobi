@@ -33,7 +33,8 @@ The experiment uses a **cross-temperature, question-level** design:
 | High-temperature generation | T = 1.0, top-p = 0.8, top-k = 20 |
 | Low-temperature generation | T = 0.1 |
 | Maximum new tokens | 64 |
-| Qwen3 thinking mode | Disabled |
+| Prompt format | Raw few-shot text (`Question: … Answer:`); no chat template, so Qwen3's thinking toggle is not used |
+| Sampling | `do_sample=True` for both temperatures (T = 0.1 and T = 1.0) |
 | NLI model | `cross-encoder/nli-deberta-v3-small` |
 
 Correctness normalization lowercases the answer, removes ASCII punctuation and articles, and collapses whitespace before exact-match comparison. Exact match is a strict reference-based proxy: a factually valid paraphrase may still be labelled incorrect.

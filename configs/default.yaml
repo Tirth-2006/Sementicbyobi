@@ -11,7 +11,8 @@ generation:
   top_k: 20
   num_generations: 10
   max_new_tokens: 64
-  enable_thinking: false
+  do_sample: true            # sample when true and temperature > 0, else greedy
+  enable_thinking: false     # documentation only: raw text prompts, no chat template; true is rejected
 data:
   dataset: trivia_qa
   split: validation
