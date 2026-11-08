@@ -1,11 +1,11 @@
 """Model wrapper and generation utilities."""
-from typing import Dict
+from typing import Any, Dict
 import logging
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 from ..config import ModelConfig, GenerationConfig
+from ..models import load_quantized_causal_lm
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,38 +32,17 @@ class QwenGenerator:
 
     def _load_model(self):
         """Load model and tokenizer."""
-        model_dir = self.config.resolved_model_dir()
-
         if not torch.cuda.is_available():
             raise RuntimeError("CUDA is unavailable. Check PyTorch installation.")
 
         logger.info(f"GPU: {torch.cuda.get_device_name(0)}")
-        logger.info("Loading tokenizer from local files...")
+        logger.info(f"Loading {self.config.model_name} (4-bit NF4) from local files...")
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            str(model_dir),
-            local_files_only=True
-        )
-
-        # 4-bit quantization config
-        quant_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_use_double_quant=True
-        )
-
-        logger.info(f"Loading {self.config.model_name} in 4-bit mode...")
-
-        self.model = AutoModelForCausalLM.from_pretrained(
-            str(model_dir),
-            quantization_config=quant_config,
+        # Single shared loader: same quantization settings for every script.
+        self.tokenizer, self.model, _ = load_quantized_causal_lm(
+            self.config.resolved_model_dir(),
             device_map=self.config.device_map,
-            torch_dtype=torch.float16,
-            local_files_only=True
         )
-
-        self.model.eval()
         logger.info("Model loaded successfully.")
 
     def generate_single(self,
@@ -137,7 +116,7 @@ class QwenGenerator:
 
     def generate_multiple(self,
                          prompt: str,
-                         gen_config: GenerationConfig) -> Dict[str, any]:
+                         gen_config: GenerationConfig) -> Dict[str, Any]:
         """Generate multiple responses for semantic entropy estimation.
 
         Args:

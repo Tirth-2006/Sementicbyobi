@@ -1,0 +1,151 @@
+{
+  "experiment": "post_token_dispersion_predictive_evaluation",
+  "question_unit": "one independent question-level sample",
+  "configurations": {
+    "semantic_entropy": {
+      "configuration": "semantic_entropy",
+      "feature_dimension": 1,
+      "best_C_by_outer_fold": [
+        0.1,
+        0.1
+      ],
+      "auroc_incorrect": 0.8381532217148655,
+      "aurac": 0.47957594831987044,
+      "spearman_uncertainty_vs_correct": -0.5210144688380173,
+      "accuracy_at_0_5": 0.73,
+      "precision_at_0_5": 0.0,
+      "recall_at_0_5": 0.0,
+      "f1_at_0_5": 0.0
+    },
+    "token_entropy": {
+      "configuration": "token_entropy",
+      "feature_dimension": 1,
+      "best_C_by_outer_fold": [
+        0.1,
+        0.1
+      ],
+      "auroc_incorrect": 0.802130898021309,
+      "aurac": 0.4793620354081985,
+      "spearman_uncertainty_vs_correct": -0.4646765887789521,
+      "accuracy_at_0_5": 0.73,
+      "precision_at_0_5": 0.0,
+      "recall_at_0_5": 0.0,
+      "f1_at_0_5": 0.0
+    },
+    "semantic_plus_token_entropy": {
+      "configuration": "semantic_plus_token_entropy",
+      "feature_dimension": 2,
+      "best_C_by_outer_fold": [
+        1.0,
+        0.1
+      ],
+      "auroc_incorrect": 0.8219178082191781,
+      "aurac": 0.4946754088225071,
+      "spearman_uncertainty_vs_correct": -0.4951088086989842,
+      "accuracy_at_0_5": 0.77,
+      "precision_at_0_5": 0.75,
+      "recall_at_0_5": 0.2222222222222222,
+      "f1_at_0_5": 0.34285714285714286
+    },
+    "semantic_plus_token_entropy_plus_post_token_dispersion": {
+      "configuration": "semantic_plus_token_entropy_plus_post_token_dispersion",
+      "feature_dimension": 3,
+      "best_C_by_outer_fold": [
+        0.1,
+        0.1
+      ],
+      "auroc_incorrect": 0.8320649416539827,
+      "aurac": 0.5092290278631474,
+      "spearman_uncertainty_vs_correct": -0.5107150753246417,
+      "accuracy_at_0_5": 0.77,
+      "precision_at_0_5": 0.6111111111111112,
+      "recall_at_0_5": 0.4074074074074074,
+      "f1_at_0_5": 0.4888888888888889
+    }
+  },
+  "paired_bootstrap_metric_differences": {
+    "comparison": "semantic_plus_token_entropy_plus_post_token_dispersion minus semantic_plus_token_entropy",
+    "resamples": 20000,
+    "random_seed": 20261106,
+    "confidence_intervals_95": {
+      "auroc_incorrect": [
+        -0.03353181879182064,
+        0.058133980801806866
+      ],
+      "aurac": [
+        -0.027416714605910785,
+        0.060537069199043426
+      ],
+      "spearman_uncertainty_vs_correct": [
+        -0.08843133535746817,
+        0.05073514223931613
+      ],
+      "accuracy_at_0_5": [
+        -0.07000000000000006,
+        0.07000000000000006
+      ],
+      "precision_at_0_5": [
+        -0.4285714285714286,
+        0.16666666666666663
+      ],
+      "recall_at_0_5": [
+        -0.03125,
+        0.3940909090908959
+      ],
+      "f1_at_0_5": [
+        -0.08571428571428574,
+        0.3806528417818734
+      ]
+    },
+    "valid_samples": {
+      "auroc_incorrect": 20000,
+      "aurac": 20000,
+      "spearman_uncertainty_vs_correct": 20000,
+      "accuracy_at_0_5": 20000,
+      "precision_at_0_5": 20000,
+      "recall_at_0_5": 20000,
+      "f1_at_0_5": 20000
+    },
+    "undefined_samples": {
+      "auroc_incorrect": 0,
+      "aurac": 0,
+      "spearman_uncertainty_vs_correct": 0,
+      "accuracy_at_0_5": 0,
+      "precision_at_0_5": 0,
+      "recall_at_0_5": 0,
+      "f1_at_0_5": 0
+    }
+  },
+  "data_audit": {
+    "questions": 100,
+    "correct": 27,
+    "incorrect": 73,
+    "question_ids_match": true,
+    "post_token": {
+      "answer_shape": [
+        1000,
+        2048
+      ],
+      "answer_dtype": "float32",
+      "dispersion_dtype": "float64",
+      "all_finite": true
+    },
+    "all_features_finite": true
+  },
+  "settings": {
+    "outer_folds": 2,
+    "inner_folds": 2,
+    "shuffle": true,
+    "random_state": 20261106,
+    "regularization_grid": [
+      0.1,
+      1.0
+    ],
+    "scaler": "StandardScaler inside Pipeline",
+    "classifier": "LogisticRegression solver=lbfgs max_iter=1000",
+    "selection_metric": "inner-fold AUROC",
+    "uncertainty": "1 - predicted probability of correctness",
+    "post_token_dispersion_arithmetic": "float64",
+    "bootstrap_resamples": 20000
+  }
+}

@@ -11,7 +11,7 @@ abstract: >-
 authors:
   - family-names: Patel
     given-names: Tirth Sanjaykumar
-repository-code: "https://github.com/Tirth-2006/semantic-entropy-hallucination-detection"
+repository-code: "https://github.com/Tirth-2006/Sementicbyobi"
 license: Apache-2.0
 keywords:
   - semantic entropy

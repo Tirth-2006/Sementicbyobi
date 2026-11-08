@@ -70,7 +70,7 @@ def test_pool_hidden_states_shapes_and_values():
     torch = pytest.importorskip("torch")
     from uncertainty.hidden_states.extraction import pool_hidden_states
 
-    layer0 = torch.arange(2 * 5 * 4, dtype=torch.float32).reshape(1, 5, 4)
+    layer0 = torch.arange(5 * 4, dtype=torch.float32).reshape(1, 5, 4)
     layer1 = -layer0
     pooled = pool_hidden_states((layer0, layer1), [1, 2, 3])
     assert pooled.shape == (2, 4, 4)  # layers, pooling, hidden

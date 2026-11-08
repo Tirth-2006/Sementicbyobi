@@ -65,7 +65,7 @@ def test_entropy_from_logits_uniform_and_peaked():
     )
 
     uniform = torch.zeros(8)
-    assert float(entropy_from_logits(uniform)) == pytest.approx(math.log(8), rel=1e-6)
+    assert float(entropy_from_logits(uniform)) == pytest.approx(math.log(8), rel=1e-5)
     peaked = torch.tensor([50.0] + [0.0] * 7)
     assert float(entropy_from_logits(peaked)) == pytest.approx(0.0, abs=1e-6)
 

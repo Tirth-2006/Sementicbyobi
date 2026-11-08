@@ -89,3 +89,15 @@ def test_light_modules_import_outside_repo_root(module, tmp_path):
         [sys.executable, "-c", code], cwd=tmp_path, capture_output=True, text=True
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_only_the_shared_loader_builds_quantization_config():
+    """One model-loading implementation: ``uncertainty/models.py``."""
+    root = SRC.parents[0]
+    offenders = [
+        str(p.relative_to(root))
+        for p in list((root / "src").rglob("*.py")) + list((root / "scripts").rglob("*.py"))
+        if "BitsAndBytesConfig" in p.read_text(encoding="utf-8")
+        and p.name != "models.py"
+    ]
+    assert not offenders, f"duplicate model loaders: {offenders}"

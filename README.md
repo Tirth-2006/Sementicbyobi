@@ -326,8 +326,8 @@ Large model weights, the complete generated-answer corpus, and all original hidd
 The package metadata requires **Python 3.10 or newer**. A CUDA-compatible PyTorch and bitsandbytes installation is needed for the local quantized Qwen3 experiments. Install a PyTorch build appropriate for your OS, CUDA driver and hardware; a generic dependency installation does not configure CUDA for every machine.
 
 ```bash
-git clone https://github.com/Tirth-2006/semantic-entropy-hallucination-detection.git
-cd semantic-entropy-hallucination-detection
+git clone https://github.com/Tirth-2006/Sementicbyobi.git
+cd Sementicbyobi
 
 python -m venv .venv
 # Windows PowerShell:  .venv\Scripts\Activate.ps1

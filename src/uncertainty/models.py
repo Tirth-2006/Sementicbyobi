@@ -24,6 +24,7 @@ def load_tokenizer(model_dir: str | os.PathLike | None = None) -> Any:
 
 def load_quantized_causal_lm(
     model_dir: str | os.PathLike | None = None,
+    device_map: str | dict[str, Any] = "auto",
 ) -> tuple[Any, Any, Path]:
     """Load tokenizer and 4-bit NF4 (double-quant, FP16 compute) causal LM.
 
@@ -46,7 +47,7 @@ def load_quantized_causal_lm(
     model = AutoModelForCausalLM.from_pretrained(
         str(path),
         quantization_config=quant_config,
-        device_map="auto",
+        device_map=device_map,
         torch_dtype=torch.float16,
         local_files_only=True,
     )

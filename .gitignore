@@ -23,6 +23,13 @@ generation_config.json
 data/generated/*
 !data/generated/*_report.md
 !data/generated/*_aurac_curve.csv
+# Compact OOF predictions / metrics / metadata for the dispersion experiments
+!data/generated/*_oof.csv
+!data/generated/*_oof_predictions.csv
+!data/generated/post_token_dispersion_predictive_evaluation.*
+!data/generated/predictor_vs_post_token_dispersion_*.csv
+!data/generated/predictor_vs_post_token_dispersion_results.json
+!data/generated/*_post_token_hidden_state_metadata.json
 generation_log.txt
 semantic_uncertainty_repo/
 
